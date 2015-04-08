@@ -322,6 +322,7 @@ Add BOOTSTRAP:
 	@import "bootstrap"; 
 	Refresh to see new styling 
 	commit
+	
 	Add this to the application.js file under the two jquery lines: 
 	//= require bootstrap-sprockets
 	Refresh
