@@ -52,6 +52,7 @@ Install Gems
 	byebug?
 	annotate for showing tables in console?
 	bundle 
+
 --------------------- create restaurant stuff ------------------------
 Create a Restaurant model with whatever attributes you want: 
 	In console: 
@@ -257,7 +258,109 @@ Add a "new" button on the index page:
 	Refresh
 	Commit
 
+Add users with the DEVISE gem: 
+	gem 'devise', '~> 3.3.0'
+	bundle
+	Restart server
+	Follow devise documentation instructions online: 
+	rails g devise:install
+	1. in development.rb file: 
+	config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+	2. & 3. are done 
+	5. run: 
+	rails g devise:views
+	rails g devise User
+	rake db:migrate
+	Restart server 
+	try localhost:3000/users/sign_up
+	Commit
 
+Try a branch here?: 
+	With: 
+	git branch -b something...
+	
+Link Pins to Users: 
+	Create associations in models pin.rb and user.rb 
+	has_many & belongs_to
+	
+	Generate a migration so that the pin table has a user_id column: 
+	rails g migration add_user_id_to_pins user_id:integer:index
+	Can see this in migration file
+	rake db:migrate
+	See changes in schema.rb file
+
+	(If you want)Connect our existing pins to a user by going into rails c and doing something like:
+	@pin = Pin.first
+	@user = User.first 
+	@pin.user = @user
+	@pin.save 
+	
+	In pins_controller, change the @pin.new in both the new and the create actions to: 
+	current_user.pins.build
+
+Display the user's email in each pin:
+	In show.html.erb file: 
+	<p></p>
+	Submitted by
+	<%= @pin.user.email %>
+	<br/>
+	Refresh and see error cuz we don't have a pin.user.email so: 
+
+Add BOOTSTRAP: 
+	Install the gem in Gemfile: 
+	gem 'bootstrap-sass', '3.2.0.2'
+	bundle
+	restart server
+	
+	Follow online documentation and Configure bootstrap:
+	Add .scss to app/assests/stylesheets/application.css  
+
+	Add this to the bottom of application.scss file: 
+	@import "bootstrap-sprockets";
+	@import "bootstrap"; 
+	Refresh to see new styling 
+	Add this to the application.js file under the two jquery lines: 
+	//= require bootstrap-sprockets
+	Refresh
+	Commit
+
+Add Nav Bar:
+	To views/layout/application.html.erb file. Below body tag: 
+	<nav class="navbar navbar-default">
+	<div class="container">
+	  <div class="navbar-brand">
+	    <%= link_to "Pin Board", root_path %>
+	  </div>
+	  <% if user_signed_in? %>
+	    <ul class="nav navbar-nav navbar-right">
+	      <li>
+	        <%= link_to "New Pin", new_pin_path %>
+	      </li>
+	      <li>
+	        <%= link_to "Account", edit_user_registration_path %>
+	      </li>
+	      <li>
+	        <%= link_to "Sign Out", destroy_user_session_path, method: :delete %>
+	      </li>
+	    </ul>
+	  <% else %>
+	    <ul class="nav navbar-nav navbar-right">
+	      <li>
+	        <%= link_to "Sign Up", new_user_registration_path %>
+	      </li>
+	      <li>
+	        <%= link_to "Sign In", new_user_session_path %>
+	      </li>
+	    </ul>
+	  <% end %>
+	</div>
+	</nav>
+     
+	Delete new pin link from the views/pins/index page: 
+	<%= link_to "New Pin", new_pin_path %>
+	since we already have one in the nav now. 
+	refresh
+	commit
 
 
 
@@ -455,109 +558,8 @@ Add a "new" button on the index page:
 	Refresh
 	Commit
 
-Add users with the DEVISE gem: 
-	gem 'devise', '~> 3.3.0'
-	bundle
-	Restart server
-	Follow devise documentation instructions online: 
-	rails g devise:install
-	1. in development.rb file: 
-	config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
-	2. & 3. are done 
-	5. run: 
-	rails g devise:views
-	rails g devise User
-	rake db:migrate
-	Restart server 
-	try localhost:3000/users/sign_up
-	Commit
 
-Try a branch here?: 
-	With: 
-	git branch -b something...
-	
-Link Pins to Users: 
-	Create associations in models pin.rb and user.rb 
-	has_many & belongs_to
-	
-	Generate a migration so that the pin table has a user_id column: 
-	rails g migration add_user_id_to_pins user_id:integer:index
-	Can see this in migration file
-	rake db:migrate
-	See changes in schema.rb file
 
-	(If you want)Connect our existing pins to a user by going into rails c and doing something like:
-	@pin = Pin.first
-	@user = User.first 
-	@pin.user = @user
-	@pin.save 
-	
-	In pins_controller, change the @pin.new in both the new and the create actions to: 
-	current_user.pins.build
-
-Display the user's email in each pin:
-	In show.html.erb file: 
-	<p></p>
-	Submitted by
-	<%= @pin.user.email %>
-	<br/>
-	Refresh and see error cuz we don't have a pin.user.email so: 
-
-Add BOOTSTRAP: 
-	Install the gem in Gemfile: 
-	gem 'bootstrap-sass', '3.2.0.2'
-	bundle
-	restart server
-	
-	Follow online documentation and Configure bootstrap:
-	Add .scss to app/assests/stylesheets/application.css  
-
-	Add this to the bottom of application.scss file: 
-	@import "bootstrap-sprockets";
-	@import "bootstrap"; 
-	Refresh to see new styling 
-	Add this to the application.js file under the two jquery lines: 
-	//= require bootstrap-sprockets
-	Refresh
-	Commit
-
-Add Nav Bar:
-	To views/layout/application.html.erb file. Below body tag: 
-	<nav class="navbar navbar-default">
-	<div class="container">
-	  <div class="navbar-brand">
-	    <%= link_to "Pin Board", root_path %>
-	  </div>
-	  <% if user_signed_in? %>
-	    <ul class="nav navbar-nav navbar-right">
-	      <li>
-	        <%= link_to "New Pin", new_pin_path %>
-	      </li>
-	      <li>
-	        <%= link_to "Account", edit_user_registration_path %>
-	      </li>
-	      <li>
-	        <%= link_to "Sign Out", destroy_user_session_path, method: :delete %>
-	      </li>
-	    </ul>
-	  <% else %>
-	    <ul class="nav navbar-nav navbar-right">
-	      <li>
-	        <%= link_to "Sign Up", new_user_registration_path %>
-	      </li>
-	      <li>
-	        <%= link_to "Sign In", new_user_session_path %>
-	      </li>
-	    </ul>
-	  <% end %>
-	</div>
-	</nav>
-     
-	Delete new pin link from the views/pins/index page: 
-	<%= link_to "New Pin", new_pin_path %>
-	since we already have one in the nav now. 
-	refresh
-	commit
 
 Add a wrapper around the new & edit forms. 
 	In new.html.erb, add:
