@@ -52,7 +52,215 @@ Install Gems
 	byebug?
 	annotate for showing tables in console?
 	bundle 
+--------------------- create restaurant stuff ------------------------
+Create a Restaurant model with whatever attributes you want: 
+	In console: 
+	rails g model Restaurant title:string description:text 	
 
+Move the model over to the db: 
+	In console: 
+	rake db:migrate
+
+Create a Restaurants controller: 
+	In console: 
+	rails g controller Restaurants 
+
+Create an index action 
+	In Restaurants_controller.rb:
+	def index
+	end
+
+Put all the resources in the routes file as well as make the root path point to the index action in Restaurants controller: 
+	-in routes.rb 
+	resources :Restaurants
+	root 'Restaurants#index'
+
+Create an index view: 
+	In app/views/restaurant create new file called:
+	index.html.erb
+	and put in a simple: 
+	<h1>This is the index placeholder</h1>
+
+Create the new and create CRUD actions in Restaurants_controller.rb 
+	Start wtih this: 
+	def new
+		@restaurant = Restaurant.new
+	end
+
+	def create
+		@restaurant = Restaurant.new(restaurant_params)
+	end
+
+
+	private
+
+	def restaurant_params
+		params.require(:restaurant).permit(:title, :description)
+	end
+
+Create a view for creating a new restaurant: 
+	In app/views/Restaurants: 
+	new.html.erb
+	
+	Add code in new view for a form to create a new restaurant: 
+	<h1>New Form</h1>
+	<%= render 'form' %>
+	<%= link_to "Back", root_path %>
+
+List all of the Restaurants on the index page: 
+	Go back to views/Restaurants/index.html.erb and add: 
+	<% @Restaurants.each do |restaurant| %>
+	  <h2>
+	    <%= link_to restaurant.title, restaurant %>
+	  </h2>
+	<% end %>
+	Refresh, should still get no method error in Restaurants#index error 
+	So now add the following to the index method in the RestaurantsController:
+	@Restaurants = Restaurant.all.order("created_at DESC")
+	refresh
+
+	Add edit, update and destroy actions in RestaurantsController
+
+Create a form partial for creating a new restaurant: 
+	In views/Restaurants create the form partial _form.html.erb
+	In gemfile: 
+	gem 'simple_form', '~> 3.0.2'
+	bundle
+	Read documentation on simple_form
+	rails g simple_form:install --bootstrap  
+	In the form partial: 
+	<%= simple_form_for @restaurant, html: {multipart: true} do |f| %>
+	  <%= if @restaurant.errors.any?  %>
+	    <div id="errors"></div>
+	    <h2></h2>
+	    <%= pluralize(@restaurant.errors.count, "error") %>
+	    prevented this Restaurant from saving
+	    <ul></ul>
+	    <% @restaurant.errors.full_messages.each do |msg| %>
+	      <li>
+	        <%= msg %>
+	      </li>
+	    <% end %>
+	  <% end %>
+	  
+	  <div class="form-group">
+	    <%= f.input :title, input_html: { class: 'form-control'} %>
+	  </div>
+	  <div class="form-group">
+	    <%= f.input :description, input_html: { class: 'form-control'} %>
+	  </div>
+	  <%= f.button :submit, class: "btn btn-primary" %>
+	<% end %>
+	Refresh in browser localhost:3000/Restaurants/new, should see form. 
+
+	In the Restaurants controller, create action, add: 
+		if @restaurant.save
+			redirect_to @restaurant, notice: "Successfully created new Restaurant"
+		else
+			render 'new'
+		end
+
+		refresh
+
+Add a flash message for when a new restaurant is created: 
+	In view/layouts/application.html.erb, 
+	In the <body> tag and above the <%=yield: 
+	<% flash.each do |name, msg| %>
+      <%= content_tag :div, msg, class: "alert alert-info"  %> <!-- this is bootstrap -->
+    <% end %>
+    Refresh and get unknow action error. url should have /restaurant/1 but we haven't defined a show action inside of our params. 
+	So in RestaurantsController:  
+	def show
+	end
+
+	Because we'll have to do this for a few of our cruds, create a private method called find_restaurant for a few of the crud actions in Restaurants_controller, under private, so:
+	private 
+	def find_restaurant
+		@restaurant = Restaurant.find(params[:id])
+	end
+	Then at top add following before action: 
+	before_action :find_restaurant, only: [:show, :edit, :update, :destroy]
+
+Create a SHOW view: 
+	In views/Restaurants/ create show.html.erb
+	Add following to file: 
+	<h1>
+		<%= @restaurant.title %>
+		<p>
+		<%= @restaurant.description %>
+		</p>
+	</h1>
+	Refresh, should see flash message "successfully created new restaurantt" as well as title and description. 
+
+	Also add a link back to the home page (root path): 
+	<%= link_to "Back", root_path %>
+	Refresh to see.
+
+List out all of the Restaurants on the index page: 
+	<% @Restaurants.each do |restaurant| %>
+      <h2>
+        <%= link_to restaurant.title, restaurant %>
+      </h2>
+  	<% end %>
+  	Refresh and see NoMethodError in Restaurants#index cuz it's not defined in the controller. 
+  	So in RestaurantsController, index action, add: 
+  		@Restaurants = Restaurant.all.order("created_at DESC")
+
+  	Commit
+
+Add edit, update and destroy actions/methods to restaurant controller: 
+	def edit
+	
+	end
+	
+	def update
+		if @restaurant.update(restaurant_params)
+			redirect_to @restaurant, notice: "Restaurant was Successfully updated"
+		else
+			render 'edit'
+		end
+	end
+
+	def destroy
+
+	end
+
+Create an edit view: 
+	Create new file in views/Restaurants called:
+	edit.html.erb 
+	Add code: 
+	<h1>Edit Restaurant</h1>
+	<%= render 'form' %>
+	<%= link_to "Cancel", restaurant_path %>
+
+	Commit
+ 
+Add a link_to on the show page to link to the edit page: 
+	<%= link_to "Edit", edit_restaurant_path %>
+	Refresh
+	Add code in the destroy action to delete a restaurant & redirect to main index page: 
+	  @restaurant.destroy
+	  redirect_to root_path
+
+	Commit	
+
+Now add delete button on show page: 
+	In views/show:
+	<%= link_to "Delete", restaurant_path, method: :delete, data: {confirm: "Are you sure?"} %>
+	Refresh
+
+Add a "new" button on the index page:
+	In views/index:
+	<%= link_to "New Restaurant", new_restaurant_path %>
+	Refresh
+	Commit
+
+
+
+
+
+
+-------------------
 Create a Pin model with a title that's a string and a description that's text: 
 	In console: 
 	rails g model Pin title:string description:text 	
