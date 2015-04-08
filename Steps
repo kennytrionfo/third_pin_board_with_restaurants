@@ -1,0 +1,766 @@
+------------ Third Pinboard site ----------Kenny Trionfo---12/24/2014--------
+This one is going to add the restaurants with nested routes and dependencies with pins etc. 
+This was started on laptop at home. 
+
+===============================
+==== Right Here Right Now =====
+===============================
+-Log time. 
+
+-Make it so that after you signup or log back in, you are redirected to the pins index page, not the landing page.  
+-Add a restaurant model with a controller, crud actions, views and routes and then connect restaurants to a user pins to a restaurant. 
+-Change the devise notices for sucessful login, logout etc to be custom. 
+-Add a yummy yucky attribute to pins. 
+-James - help me find and change the "missing" word on the cards on the pins index page when there is no picture. 
+-James - help me find where I change the css so that the image has some padding right it too so it looks like it's in the card. 
+-Make the signed in, new pin, signed out notices fade after showing and not change the page also upon refresh. 
+-Redo this freaking app 3 times. 
+===============================
+
+Create a new rails app called pin_board that uses postgres db and skips installing test::unit. 
+	In console: 
+	rails new pin_board -d postgresql --skip-test-unit
+	rake db:create 
+	rake db:migrate
+
+Make sure file works in browser: 
+	cd pin_board
+	rails s
+	In browswer: 
+	localhost:3000
+	Should see rails message. 
+
+Check Versions etc: 
+	ruby -v
+	rails -v
+	rvm info
+	gemset
+	etc
+
+Set up github repo:
+	set up on github 
+	and commit and push on local
+
+Install Gems
+	In Gemfile:
+	gem 'haml', '~> 4.0.6' to gemfile #Don't need this if not going to use haml dsl in the app.
+	gem 'bootstrap-sass', '~> 3.2.0.2'
+	gem 'simple_form', '~> 3.0.2'
+	? Better Errors?
+	? minitest-rails?
+	? debugger ? 
+	byebug?
+	annotate for showing tables in console?
+	bundle 
+
+Create a Pin model with a title that's a string and a description that's text: 
+	In console: 
+	rails g model Pin title:string description:text 	
+
+Move the model over to the db: 
+	In console: 
+	rake db:migrate
+
+Create a Pins controller: 
+	In console: 
+	rails g controller Pins 
+
+Create an index action 
+	In pins_controller.rb:
+	def index
+	end
+
+Put all the resources in the routes file as well as make the root path point to the index action in pins controller: 
+	-in routes.rb 
+	resources :pins
+	root 'pins#index'
+
+Create an index view: 
+	In app/views/pin create new file called:
+	index.html.erb
+	and put in a simple: 
+	<h1>This is the index placeholder</h1>
+
+Create the new and create CRUD actions in pins_controller.rb 
+	Start wtih this: 
+	def new
+		@pin = Pin.new
+	end
+
+	def create
+		@pin = Pin.new(pin_params)
+	end
+
+
+	private
+
+	def pin_params
+		params.require(:pin).permit(:title, :description)
+	end
+
+Create a view for creating a new pin: 
+	In app/views/pins: 
+	new.html.erb
+	
+	Add code in new view for a form to create a new pin: 
+	<h1>New Form</h1>
+	<%= render 'form' %>
+	<%= link_to "Back", root_path %>
+
+List all of the pins on the index page: 
+	Go back to views/pins/index.html.erb and add: 
+	<% @pins.each do |pin| %>
+	  <h2>
+	    <%= link_to pin.title, pin %>
+	  </h2>
+	<% end %>
+	Refresh, should still get no method error in Pins#index error 
+	So now add the following to the index method in the PinsController:
+	@pins = Pin.all.order("created_at DESC")
+	refresh
+
+	Add edit, update and destroy actions in PinsController
+
+Create a form partial for creating a new pin: 
+	In views/pins create the form partial _form.html.erb
+	In gemfile: 
+	gem 'simple_form', '~> 3.0.2'
+	bundle
+	Read documentation on simple_form
+	rails g simple_form:install --bootstrap  
+	In the form partial: 
+	<%= simple_form_for @pin, html: {multipart: true} do |f| %>
+	  <%= if @pin.errors.any?  %>
+	    <div id="errors"></div>
+	    <h2></h2>
+	    <%= pluralize(@pin.errors.count, "error") %>
+	    prevented this Pin from saving
+	    <ul></ul>
+	    <% @pin.errors.full_messages.each do |msg| %>
+	      <li>
+	        <%= msg %>
+	      </li>
+	    <% end %>
+	  <% end %>
+	  
+	  <div class="form-group">
+	    <%= f.input :title, input_html: { class: 'form-control'} %>
+	  </div>
+	  <div class="form-group">
+	    <%= f.input :description, input_html: { class: 'form-control'} %>
+	  </div>
+	  <%= f.button :submit, class: "btn btn-primary" %>
+	<% end %>
+	Refresh in browser localhost:3000/pins/new, should see form. 
+
+	In the pins controller, create action, add: 
+		if @pin.save
+			redirect_to @pin, notice: "Successfully created new Pin"
+		else
+			render 'new'
+		end
+
+		refresh
+
+Add a flash message for when a new pin is created: 
+	In view/layouts/application.html.erb, 
+	In the <body> tag and above the <%=yield: 
+	<% flash.each do |name, msg| %>
+      <%= content_tag :div, msg, class: "alert alert-info"  %> <!-- this is bootstrap -->
+    <% end %>
+    Refresh and get unknow action error. url should have /pin/1 but we haven't defined a show action inside of our params. 
+	So in PinsController:  
+	def show
+	end
+
+	Because we'll have to do this for a few of our cruds, create a private method called find_pin for a few of the crud actions in pins_controller, under private, so:
+	private 
+	def find_pin
+		@pin = Pin.find(params[:id])
+	end
+	Then at top add following before action: 
+	before_action :find_pin, only: [:show, :edit, :update, :destroy]
+
+Create a SHOW view: 
+	In views/pins/ create show.html.erb
+	Add following to file: 
+	<h1>
+		<%= @pin.title %>
+		<p>
+		<%= @pin.description %>
+		</p>
+	</h1>
+	Refresh, should see flash message "successfully created new pint" as well as title and description. 
+
+	Also add a link back to the home page (root path): 
+	<%= link_to "Back", root_path %>
+	Refresh to see.
+
+List out all of the pins on the index page: 
+	<% @pins.each do |pin| %>
+      <h2>
+        <%= link_to pin.title, pin %>
+      </h2>
+  	<% end %>
+  	Refresh and see NoMethodError in Pins#index cuz it's not defined in the controller. 
+  	So in PinsController, index action, add: 
+  		@pins = Pin.all.order("created_at DESC")
+
+  	Commit
+
+Add edit, update and destroy actions/methods to pin controller: 
+	def edit
+	
+	end
+	
+	def update
+		if @pin.update(pin_params)
+			redirect_to @pin, notice: "Pin was Successfully updated"
+		else
+			render 'edit'
+		end
+	end
+
+	def destroy
+
+	end
+
+Create an edit view: 
+	Create new file in views/pins called:
+	edit.html.erb 
+	Add code: 
+	<h1>Edit Pin</h1>
+	<%= render 'form' %>
+	<%= link_to "Cancel", pin_path %>
+
+	Commit
+ 
+Add a link_to on the show page to link to the edit page: 
+	<%= link_to "Edit", edit_pin_path %>
+	Refresh
+	Add code in the destroy action to delete a pin & redirect to main index page: 
+	  @pin.destroy
+	  redirect_to root_path
+
+	Commit	
+
+Now add delete button on show page: 
+	In views/show:
+	<%= link_to "Delete", pin_path, method: :delete, data: {confirm: "Are you sure?"} %>
+	Refresh
+
+Add a "new" button on the index page:
+	In views/index:
+	<%= link_to "New Pin", new_pin_path %>
+	Refresh
+	Commit
+
+Add users with the DEVISE gem: 
+	gem 'devise', '~> 3.3.0'
+	bundle
+	Restart server
+	Follow devise documentation instructions online: 
+	rails g devise:install
+	1. in development.rb file: 
+	config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+	2. & 3. are done 
+	5. run: 
+	rails g devise:views
+	rails g devise User
+	rake db:migrate
+	Restart server 
+	try localhost:3000/users/sign_up
+	Commit
+
+Try a branch here?: 
+	With: 
+	git branch -b something...
+	
+Link Pins to Users: 
+	Create associations in models pin.rb and user.rb 
+	has_many & belongs_to
+	
+	Generate a migration so that the pin table has a user_id column: 
+	rails g migration add_user_id_to_pins user_id:integer:index
+	Can see this in migration file
+	rake db:migrate
+	See changes in schema.rb file
+
+	(If you want)Connect our existing pins to a user by going into rails c and doing something like:
+	@pin = Pin.first
+	@user = User.first 
+	@pin.user = @user
+	@pin.save 
+	
+	In pins_controller, change the @pin.new in both the new and the create actions to: 
+	current_user.pins.build
+
+Display the user's email in each pin:
+	In show.html.erb file: 
+	<p></p>
+	Submitted by
+	<%= @pin.user.email %>
+	<br/>
+	Refresh and see error cuz we don't have a pin.user.email so: 
+
+Add BOOTSTRAP: 
+	Install the gem in Gemfile: 
+	gem 'bootstrap-sass', '3.2.0.2'
+	bundle
+	restart server
+	
+	Follow online documentation and Configure bootstrap:
+	Add .scss to app/assests/stylesheets/application.css  
+
+	Add this to the bottom of application.scss file: 
+	@import "bootstrap-sprockets";
+	@import "bootstrap"; 
+	Refresh to see new styling 
+	Add this to the application.js file under the two jquery lines: 
+	//= require bootstrap-sprockets
+	Refresh
+	Commit
+
+Add Nav Bar:
+	To views/layout/application.html.erb file. Below body tag: 
+	<nav class="navbar navbar-default">
+	<div class="container">
+	  <div class="navbar-brand">
+	    <%= link_to "Pin Board", root_path %>
+	  </div>
+	  <% if user_signed_in? %>
+	    <ul class="nav navbar-nav navbar-right">
+	      <li>
+	        <%= link_to "New Pin", new_pin_path %>
+	      </li>
+	      <li>
+	        <%= link_to "Account", edit_user_registration_path %>
+	      </li>
+	      <li>
+	        <%= link_to "Sign Out", destroy_user_session_path, method: :delete %>
+	      </li>
+	    </ul>
+	  <% else %>
+	    <ul class="nav navbar-nav navbar-right">
+	      <li>
+	        <%= link_to "Sign Up", new_user_registration_path %>
+	      </li>
+	      <li>
+	        <%= link_to "Sign In", new_user_session_path %>
+	      </li>
+	    </ul>
+	  <% end %>
+	</div>
+	</nav>
+     
+	Delete new pin link from the views/pins/index page: 
+	<%= link_to "New Pin", new_pin_path %>
+	since we already have one in the nav now. 
+	refresh
+	commit
+
+Add a wrapper around the new & edit forms. 
+	In new.html.erb, add:
+	<div class="col-md-6 col-md-offset-3">
+	with <div/> at the end of it. 
+	
+	Do same thing to edit page.
+	refresh, commit
+
+Add Paperclip gem for uploading images:
+	Add paperclip gem:
+	gem 'paperclip', '~> 4.2.0'
+	bundle install and restart server
+	Read paperclip documentation
+	Install imagemagic
+	
+	From the quickstart section in documentation, add the has_attached_file and validates_attachment_content_type to the pin: 
+	Add following to pin.rb (this is copied from paperclip gem but changed for our needs):
+	has_attached_file :image, styles: { :medium => "300x300>" }
+	validates_attachment_content_type :image, :content_type => /\Aimage\/.*\Z/
+	Run the migration (using generator) that it tells you to in documentation. For us, this will be: 
+		rails g paperclip pin image
+	rake db:migrate
+	commit
+
+	Add image upload link to form: 
+	Under views/pin/_form.html.erb:
+		<div class="form-group">
+  			<%= f.input :image, input_html: { class: 'form-control'} %>
+		</div>
+	above the other divs. 
+	rake db:migrate?
+	refresh, try to add an image, 
+	commit
+
+	In pins controller add: 
+	:image
+	to the pin_params behind :description
+	
+	Add image tag to top of show page and edit page:
+		In show.html.erb: 
+		<%= image_tag @pin.image.url(:medium) %>
+
+		Then show the user which image they are editing when they are editing it. 
+		In edit.html.erb, above = render 'form' add: 
+	   	<%= image_tag @pin.image.url(:medium) %>	
+
+	Add the image tag to the pins on the index page:
+	views/index.html.erb, change code to this: 
+		<% @pins.each do |pin| %>
+		  <%= link_to (image_tag pin.image.url(:medium)), pin %>
+		  <h2>
+		    <%= link_to pin.title, pin %>
+		  </h2>
+		<% end %>
+
+Add jquery MASONRY gem to have pins auto stack: 
+	in gemfile, put 
+	gem 'masonry-rails', '~> 0.2.1'
+	and bundle
+	
+	From documentation: add this line from the JavaScript section in application.js file under the two jquerys: 
+	//= require masonry/jquery.masonry
+	put this in pins.js.coffee, EXACTLY like this (coffescript is space/tab sensative:
+	$ ->
+	  $('#pins').imagesLoaded ->
+	    $('#pins').masonry
+	      itemSelector: '.box'
+	      isFitWidth: true
+	
+	Enable transitions in index.html.erb: 
+	Should end up like this: 
+	<div class="transitions-enabled" id="pins">
+		<% @pins.each do |pin| %>
+		  <div class="box panel panel-default">
+		    <%= link_to (image_tag pin.image.url(:medium)), pin %>
+		    <div class="panel-body">
+		      <h2>
+		        <%= link_to pin.title, pin %>
+		      </h2>
+		    </div>
+		  </div>
+		<% end %>
+	</div>
+
+	To application.css.scss file above require tree add:  
+	*= require 'masonry/transitions'
+	rails s
+	refresh
+	commit
+
+CSS styling:
+	Paste in the styles from this github repo. it's also here. just paste into the bottom of applicatin.css.scss:
+	body {
+		background: #E9E9E9;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: 100;
+	}
+
+	nav {
+		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.22);
+		.navbar-brand {
+			a {
+				color: #BD1E23;
+				font-weight: bold;
+				&:hover {
+					text-decoration: none;
+				}
+			}
+		}
+	}
+
+	#pins {
+	  margin: 0 auto;
+	  width: 100%;
+	  .box {
+		  margin: 10px;
+		  width: 350px;
+		  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.22);
+		  border-radius: 7px;
+		  text-align: center;
+		  img {
+		  	max-width: 100%;
+		  	height: auto;
+		  }
+		  h2 {
+		  	font-size: 22px;
+		  	margin: 0;
+		  	padding: 25px 10px;
+		  	a {
+					color: #474747;
+		  	}
+		  }
+		  .user {
+		  	font-size: 12px;
+		  	border-top: 1px solid #EAEAEA;
+				padding: 15px;
+				margin: 0;
+		  }
+		}
+	}
+
+	#edit_page {
+		.current_image {
+			img {
+				display: block;
+				margin: 20px 0;
+			}
+		}
+	}
+
+	#pin_show {
+		.panel-heading {
+			padding: 0;
+		}
+		.pin_image {
+			img {
+				max-width: 100%;
+				width: 100%;
+				display: block;
+				margin: 0 auto;
+			}
+		}
+		.panel-body {
+			padding: 35px;
+			h1 {
+				margin: 0 0 10px 0;
+			}
+			.description {
+				color: #868686;
+				line-height: 1.75;
+				margin: 0;
+			}
+		}
+		.panel-footer {
+			padding: 20px 35px;
+			p {
+				margin: 0;
+			}
+			.user {
+				padding-top: 8px;
+			}
+		}
+	}
+
+	textarea {
+		min-height: 250px;
+	}
+
+Style up the show page with various. should look like this:
+	<div class="row" id="pin_show">
+	  <div class="col-md-8" "col-md-offset-2">
+	    <div class="panel panel-default">
+	      <div class="panel-heading pin_image">
+	        <%= image_tag @pin.image.url %>
+	      </div>
+	      <div class="panel-body">
+	        <h1>
+	          <%= @pin.title %>
+	        </h1>
+	        <p class="description">
+	          <%= @pin.description %>
+	        </p>
+	        <p></p>
+	   <!--      Submitted by
+	        <%= @pin.user.email %> -->
+	      </div>
+	      <div class="panel-footer">
+	        <div class="row">
+	          <div class="col-md-6">
+	            <p class="user"></p>
+	            Submitted by
+	            <%= @pin.user.email %>
+	          </div>
+	          <div class="col-md-6">
+	            <div class="btn-group pull-right">
+	              <% if user_signed_in? %>
+	                <%= link_to "Edit", edit_pin_path, class: "btn btn-default" %>
+	                <%= link_to "Delete", pin_path, method: :delete, data: { confirm: "Are you sure?" }, class: "btn btn-default" %>
+	              <% end %>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+Add a welcome page and make it the index: 
+	In views/pins/ create a welcome.html.erb page. 
+	Put a simple "Welcome to Yummy Yucky" on it. 
+	In routes.rb, change root "pins#index" to "pins#welcome"
+
+Add a link on the navbar to take you to the pins index page: 
+	In views/layouts/application.html.erb, above the other links in the nav add: 
+	<li>
+		<%= link_to "Pins", pins_path %>
+	</li>
+
+Make it so that after signing in, you land on the pins index page instead of the welcome page. 
+	
+Add authentication so users who aren't signed in can't do anything:
+	below the first before_action in the pins_controller, add: 
+	before_action :authenticate_user!, except: [:index, :show]
+	Test in an in congnito window and should see that you can't do stuff. 
+
+Bootstrapify the forms:
+	Update the new form to look like this: 
+		<div class="col-md-8 col-md-offset-2">
+		  <div class="row">
+		    <div class="panel panel-default">
+		      <div class="panel-heading">
+		        <h1>Create A New Pin</h1>
+		      </div>
+		      <div class="panel-body">
+		        <%= render 'form' %>
+		        <%= link_to "Back", root_path %>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+	refresh, commit
+
+	Bootstrapify devise's Edit Account Info form:
+	Under views/devise/registration/edit.html.erb, change to this:
+	<div class="col-md-8 col-md-offset-2">
+	  <div class="row">
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+	        <h2>Edit Your Account</h2>
+	      </div>
+
+	      <div class="panel-body">
+	        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+	          <%= devise_error_messages! %>
+
+	          <div class="form-group">
+	            <%= f.label :email %><br />
+	            <%= f.email_field :email, autofocus: true, class: "form-control" %>
+	          </div>
+
+	          <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+	            <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+	          <% end %>
+
+	          <div class="form-group">
+	            <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+	            <%= f.password_field :password, autocomplete: "off", class: "form-control" %>
+	          </div>
+
+	          <div class="form-group">
+	            <%= f.label :password_confirmation %><br />
+	            <%= f.password_field :password_confirmation, autocomplete: "off", class: "form-control" %>
+	          </div>
+
+	          <div class="form-group">
+	            <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+	            <%= f.password_field :current_password, autocomplete: "off", class: "form-control" %>
+	          </div>
+
+	          <div class="form-group">
+	            <%= f.submit "Update", class: "btn btn-primary" %>
+	          </div>
+	        <% end %>
+	      </div>
+
+	      <div class="panel-footer">
+	        <h3>Cancel my account</h3>
+
+	        <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete, class: "btn btn-default" %></p>
+	        <br>
+	        <%= link_to "Back", :back, class: "btn btn-default" %>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	refresh, commit
+
+	Now Bootstrapify up the sign up page:
+	In devise/sessions/new with: 
+	<div class="col-md-8 col-md-offset-2">
+	  <div class="row">
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+					<h2>Sign In</h2>
+				</div>
+
+				<div class="panel-body">
+					<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+				  	<div class="form-group">
+				  		<%= f.label :email %><br />
+				  		<%= f.email_field :email, autofocus: true, class: "form-control" %>
+				  	</div>
+
+				  	<div class="form-group">
+				  		<%= f.label :password %><br />
+				    	<%= f.password_field :password, autocomplete: "off", class: "form-control" %>
+				    </div>
+
+				  <% if devise_mapping.rememberable? -%>
+				    <div class="form-group">
+				    	<%= f.check_box :remember_me %> <%= f.label :remember_me %>
+				    </div>
+				  <% end -%>
+
+				  <div class="form-group">
+				  	<%= f.submit "Log in", class: "btn btn-primary" %>
+				  </div>
+				<% end %>
+
+				<%= render "devise/shared/links" %>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	refresh, commit
+	
+	Bootstrapify the sign_in page in devise/sessions/new with:  
+	<div class="col-md-8 col-md-offset-2">
+	  <div class="row">
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+					<h2>Sign In</h2>
+				</div>
+
+				<div class="panel-body">
+					<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+				  	<div class="form-group">
+				  		<%= f.label :email %><br />
+				  		<%= f.email_field :email, autofocus: true, class: "form-control" %>
+				  	</div>
+
+				  	<div class="form-group">
+				  		<%= f.label :password %><br />
+				    	<%= f.password_field :password, autocomplete: "off", class: "form-control" %>
+				    </div>
+
+				  <% if devise_mapping.rememberable? -%>
+				    <div class="form-group">
+				    	<%= f.check_box :remember_me %> <%= f.label :remember_me %>
+				    </div>
+				  <% end -%>
+
+				  <div class="form-group">
+				  	<%= f.submit "Log in", class: "btn btn-primary" %>
+				  </div>
+				<% end %>
+
+				<%= render "devise/shared/links" %>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	refresh, commit
+
+
+------End of regular------
+
+      LOG TIME  ! ! !  ! !
+
+
