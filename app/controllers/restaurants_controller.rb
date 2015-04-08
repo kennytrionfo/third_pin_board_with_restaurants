@@ -8,6 +8,7 @@ class RestaurantsController < ApplicationController
 
 	def new
 		@restaurant = current_user.restaurants.build
+		@dish = restaurant.dishes.build
 	end
 
 	def create
@@ -20,7 +21,7 @@ class RestaurantsController < ApplicationController
 	end
 
 	def show
-
+		@dishes = Dish.all.order("created_at DESC")
 	end
 
 	def edit

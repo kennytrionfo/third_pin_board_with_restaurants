@@ -2,21 +2,6 @@
 This one is going to add the restaurants with nested routes and dependencies with pins etc. 
 This was started on laptop at home. 
 
-===============================
-==== Right Here Right Now =====
-===============================
--Log time. 
-
--Make it so that after you signup or log back in, you are redirected to the pins index page, not the landing page.  
--Add a restaurant model with a controller, crud actions, views and routes and then connect restaurants to a user pins to a restaurant. 
--Change the devise notices for sucessful login, logout etc to be custom. 
--Add a yummy yucky attribute to pins. 
--James - help me find and change the "missing" word on the cards on the pins index page when there is no picture. 
--James - help me find where I change the css so that the image has some padding right it too so it looks like it's in the card. 
--Make the signed in, new pin, signed out notices fade after showing and not change the page also upon refresh. 
--Redo this freaking app 3 times. 
-===============================
-
 Create a new rails app called pin_board that uses postgres db and skips installing test::unit. 
 	In console: 
 	rails new pin_board -d postgresql --skip-test-unit
@@ -585,6 +570,21 @@ Add a "new" button on the index page:
 	Refresh
 	Commit
 
+===============================
+==== Right Here Right Now =====
+===============================
+-Log time. 
+-Trying to create a new dish that is linked to a restaurant and show it on a restaurant's page. 
+-Make it so that after you signup or log back in, you are redirected to the pins index page, not the landing page.  
+-Add a restaurant model with a controller, crud actions, views and routes and then connect restaurants to a user pins to a restaurant. 
+-Change the devise notices for sucessful login, logout etc to be custom. 
+-Add a yummy yucky attribute to pins. 
+-James - help me find and change the "missing" word on the cards on the pins index page when there is no picture. 
+-James - help me find where I change the css so that the image has some padding right it too so it looks like it's in the card. 
+-Make the signed in, new pin, signed out notices fade after showing and not change the page also upon refresh. 
+-Redo this freaking app 3 times. 
+===============================
+
 Link dishes to restaurants: 
 	Create associations in models dish.rb and restaurant.rb 
 	has_many & belongs_to
@@ -602,8 +602,9 @@ Link dishes to restaurants:
 	@dish.save 
 	
 	In dishs_controller, change the @dish.new in both the new and the create actions to: 
-	current_user.restaurants.build
-	make sure your signed in and refresh, make a new res, 
+	current_user.restaurants.dishes.build or current_restaurant.dishes.build ? ? 
+	make sure your signed in and refresh, make a new dish, 
+	look in rails console to see if it has a res id
 	commit
 
 Nest the dish resources in the restaurants resources: 

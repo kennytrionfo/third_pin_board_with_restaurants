@@ -6,11 +6,24 @@
 	<p>
 	<%= @restaurant.address %>
 	</p>
-	<p>
-	<%= @restaurant.yumyuck %>
-	</p>
 </h1>
 
 <%= link_to "Back", restaurants_path %>
 <%= link_to "Edit", edit_restaurant_path %>
 <%= link_to "Delete", restaurant_path, method: :delete, data: {confirm: "Are you sure?"} %>
+
+<h1>Put the dishes index right here</h1>
+
+<% @dishes.each do |dish| %>
+  <h2>
+    <%= link_to dish.name, dish %>
+  </h2>
+  <h2>
+    <%= link_to dish.description, dish %>
+  </h2>
+  <h2>
+    <%= link_to dish.yumyuck, dish %>
+  </h2>
+<% end %>
+
+
