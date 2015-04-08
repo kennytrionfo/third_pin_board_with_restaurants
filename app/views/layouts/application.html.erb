@@ -16,6 +16,9 @@
 	  <% if user_signed_in? %>
 	    <ul class="nav navbar-nav navbar-right">
 	      <li>
+			<%= link_to "Restaurants", restaurants_path %>
+		  </li>	
+	      <li>
 	        <%= link_to "New Restaurant", new_restaurant_path %>
 	      </li>
 	      <li>
