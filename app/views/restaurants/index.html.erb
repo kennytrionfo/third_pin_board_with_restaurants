@@ -1,1 +1,7 @@
 	<h1>This is the index placeholder</h1>
+
+	<% @restaurants.each do |restaurant| %>
+	  <h2>
+	    <%= link_to restaurant.title, restaurant %>
+	  </h2>
+	<% end %>

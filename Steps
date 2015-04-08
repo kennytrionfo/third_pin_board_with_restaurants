@@ -72,8 +72,8 @@ Create an index action
 
 Put all the resources in the routes file as well as make the root path point to the index action in Restaurants controller: 
 	-in routes.rb 
-	resources :Restaurants
-	root 'Restaurants#index'
+	resources :restaurants
+	root 'restaurants#index'
 
 Create an index view: 
 	In app/views/restaurant create new file called:
@@ -99,6 +99,8 @@ Create the new and create CRUD actions in Restaurants_controller.rb
 		params.require(:restaurant).permit(:name, :description, :address, :yumyuck)
 	end
 
+	refresh, commit
+
 Create a view for creating a new restaurant: 
 	In app/views/Restaurants: 
 	new.html.erb
@@ -110,14 +112,14 @@ Create a view for creating a new restaurant:
 
 List all of the Restaurants on the index page: 
 	Go back to views/Restaurants/index.html.erb and add: 
-	<% @Restaurants.each do |restaurant| %>
+	<% @restaurants.each do |restaurant| %>
 	  <h2>
 	    <%= link_to restaurant.title, restaurant %>
 	  </h2>
 	<% end %>
 	Refresh, should still get no method error in Restaurants#index error 
 	So now add the following to the index method in the RestaurantsController:
-	@Restaurants = Restaurant.all.order("created_at DESC")
+	@restaurants = Restaurant.all.order("created_at DESC")
 	refresh
 
 	Add edit, update and destroy actions in RestaurantsController
