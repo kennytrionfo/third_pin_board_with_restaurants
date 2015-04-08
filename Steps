@@ -177,6 +177,7 @@ Add a flash message for when a new restaurant is created:
 	<% flash.each do |name, msg| %>
       <%= content_tag :div, msg, class: "alert alert-info"  %> <!-- this is bootstrap -->
     <% end %>
+    
     Refresh and get unknow action error. url should have /restaurant/1 but we haven't defined a show action inside of our params. 
 	So in RestaurantsController:  
 	def show
