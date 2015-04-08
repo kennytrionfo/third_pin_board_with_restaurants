@@ -114,7 +114,7 @@ List all of the Restaurants on the index page:
 	Go back to views/Restaurants/index.html.erb and add: 
 	<% @restaurants.each do |restaurant| %>
 	  <h2>
-	    <%= link_to restaurant.title, restaurant %>
+	    <%= link_to restaurant.name, restaurant %>
 	  </h2>
 	<% end %>
 	Refresh, should still get no method error in Restaurants#index error 
@@ -122,7 +122,22 @@ List all of the Restaurants on the index page:
 	@restaurants = Restaurant.all.order("created_at DESC")
 	refresh
 
-	Add edit, update and destroy actions in RestaurantsController
+Add edit, update and destroy actions/methods to restaurant controller: 
+	def edit
+	
+	end
+	
+	def update
+		if @restaurant.update(restaurant_params)
+			redirect_to @restaurant, notice: "Restaurant was Successfully updated"
+		else
+			render 'edit'
+		end
+	end
+
+	def destroy
+
+	end
 
 Create a form partial for creating a new restaurant: 
 	In views/Restaurants create the form partial _form.html.erb
@@ -177,7 +192,7 @@ Add a flash message for when a new restaurant is created:
 	<% flash.each do |name, msg| %>
       <%= content_tag :div, msg, class: "alert alert-info"  %> <!-- this is bootstrap -->
     <% end %>
-    
+
     Refresh and get unknow action error. url should have /restaurant/1 but we haven't defined a show action inside of our params. 
 	So in RestaurantsController:  
 	def show
@@ -195,45 +210,27 @@ Create a SHOW view:
 	In views/Restaurants/ create show.html.erb
 	Add following to file: 
 	<h1>
-		<%= @restaurant.title %>
+		<%= @restaurant.name %>
 		<p>
 		<%= @restaurant.description %>
 		</p>
+		<p>
+		<%= @restaurant.address %>
+		</p>
+		<p>
+		<%= @restaurant.yumyuck %>
+		</p>
 	</h1>
-	Refresh, should see flash message "successfully created new restaurantt" as well as title and description. 
+	Refresh, should see flash message "successfully created new restaurantt" as well as name, description, address & yumyuck. 
 
 	Also add a link back to the home page (root path): 
 	<%= link_to "Back", root_path %>
 	Refresh to see.
 
-List out all of the Restaurants on the index page: 
-	<% @Restaurants.each do |restaurant| %>
-      <h2>
-        <%= link_to restaurant.title, restaurant %>
-      </h2>
-  	<% end %>
-  	Refresh and see NoMethodError in Restaurants#index cuz it's not defined in the controller. 
-  	So in RestaurantsController, index action, add: 
-  		@Restaurants = Restaurant.all.order("created_at DESC")
 
-  	Commit
 
-Add edit, update and destroy actions/methods to restaurant controller: 
-	def edit
-	
-	end
-	
-	def update
-		if @restaurant.update(restaurant_params)
-			redirect_to @restaurant, notice: "Restaurant was Successfully updated"
-		else
-			render 'edit'
-		end
-	end
 
-	def destroy
 
-	end
 
 Create an edit view: 
 	Create new file in views/Restaurants called:
@@ -337,7 +334,22 @@ List all of the pins on the index page:
 	@pins = Pin.all.order("created_at DESC")
 	refresh
 
-	Add edit, update and destroy actions in PinsController
+Add edit, update and destroy actions/methods to pin controller: 
+	def edit
+	
+	end
+	
+	def update
+		if @pin.update(pin_params)
+			redirect_to @pin, notice: "Pin was Successfully updated"
+		else
+			render 'edit'
+		end
+	end
+
+	def destroy
+
+	end
 
 Create a form partial for creating a new pin: 
 	In views/pins create the form partial _form.html.erb
@@ -414,34 +426,9 @@ Create a SHOW view:
 	<%= link_to "Back", root_path %>
 	Refresh to see.
 
-List out all of the pins on the index page: 
-	<% @pins.each do |pin| %>
-      <h2>
-        <%= link_to pin.title, pin %>
-      </h2>
-  	<% end %>
-  	Refresh and see NoMethodError in Pins#index cuz it's not defined in the controller. 
-  	So in PinsController, index action, add: 
-  		@pins = Pin.all.order("created_at DESC")
 
-  	Commit
 
-Add edit, update and destroy actions/methods to pin controller: 
-	def edit
-	
-	end
-	
-	def update
-		if @pin.update(pin_params)
-			redirect_to @pin, notice: "Pin was Successfully updated"
-		else
-			render 'edit'
-		end
-	end
 
-	def destroy
-
-	end
 
 Create an edit view: 
 	Create new file in views/pins called:
