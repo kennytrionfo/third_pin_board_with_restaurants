@@ -133,7 +133,7 @@ Create a form partial for creating a new restaurant:
 	rails g simple_form:install --bootstrap  
 	In the form partial: 
 	<%= simple_form_for @restaurant, html: {multipart: true} do |f| %>
-	  <%= if @restaurant.errors.any?  %>
+	  <% if @restaurant.errors.any?  %>
 	    <div id="errors"></div>
 	    <h2></h2>
 	    <%= pluralize(@restaurant.errors.count, "error") %>
@@ -147,14 +147,20 @@ Create a form partial for creating a new restaurant:
 	  <% end %>
 	  
 	  <div class="form-group">
-	    <%= f.input :title, input_html: { class: 'form-control'} %>
+	    <%= f.input :name, input_html: { class: 'form-control'} %>
 	  </div>
 	  <div class="form-group">
 	    <%= f.input :description, input_html: { class: 'form-control'} %>
 	  </div>
+	  <div class="form-group">
+    	<%= f.input :address, input_html: { class: 'form-control'} %>
+	  </div>
+	  <div class="form-group">
+	    <%= f.input :yumyuck, input_html: { class: 'form-control'} %>
+	  </div>
 	  <%= f.button :submit, class: "btn btn-primary" %>
 	<% end %>
-	Refresh in browser localhost:3000/Restaurants/new, should see form. 
+	Refresh in browser localhost:3000/restaurants/new, should see form. 
 
 	In the Restaurants controller, create action, add: 
 		if @restaurant.save
@@ -163,7 +169,7 @@ Create a form partial for creating a new restaurant:
 			render 'new'
 		end
 
-		refresh
+		refresh, commit
 
 Add a flash message for when a new restaurant is created: 
 	In view/layouts/application.html.erb, 
