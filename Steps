@@ -227,11 +227,6 @@ Create a SHOW view:
 	<%= link_to "Back", root_path %>
 	Refresh to see.
 
-
-
-
-
-
 Create an edit view: 
 	Create new file in views/Restaurants called:
 	edit.html.erb 

@@ -35,7 +35,8 @@ class RestaurantsController < ApplicationController
 	end
 
 	def destroy
-		
+		@restaurant.destroy
+	  	redirect_to root_path
 	end
 
 	private
@@ -43,7 +44,7 @@ class RestaurantsController < ApplicationController
 	def restaurant_params
 		params.require(:restaurant).permit(:name, :description, :address, :yumyuck)
 	end
- 
+
 	def find_restaurant
 		@restaurant = Restaurant.find(params[:id])
 	end
