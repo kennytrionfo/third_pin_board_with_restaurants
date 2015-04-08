@@ -1,0 +1,13 @@
+<h1>
+	<%= @dish.name %>
+	<p>
+		<%= @dish.description %>
+	</p>
+	<p>
+		<%= @dish.yumyuck %>
+	</p>
+</h1>
+
+<%= link_to "Back", dishes_path %>
+<%= link_to "Edit", edit_dish_path %>
+<%= link_to "Delete", dish_path, method: :delete, data: {confirm: "Are you sure?"} %>

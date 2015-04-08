@@ -384,86 +384,91 @@ Make it so that after signing in, you land on the restaurants index page instead
 	
 Add authentication so users who aren't signed in can't do anything:
 	below the first before_action in the restaurants_controller, add: 
-	before_action :authenticate_user!, except: [:index, ]
+	before_action :authenticate_user!, except: [ ] 
 	Test in an in congnito window and should see that you can't do stuff. 
 
 
 
--------------------
-Create a Pin model with a title that's a string and a description that's text: 
+-------- Dish stuff -----------
+Create a Dish model with the attributes that you want: 
 	In console: 
-	rails g model Pin title:string description:text 	
+	rails g model Dish name:string description:text yumyuck:string 	
 
 Move the model over to the db: 
 	In console: 
 	rake db:migrate
 
-Create a Pins controller: 
+Create a Dishes controller: 
 	In console: 
-	rails g controller Pins 
+	rails g controller Dishes 
 
 Create an index action 
-	In pins_controller.rb:
+	In dishes_controller.rb:
 	def index
 	end
 
-Put all the resources in the routes file as well as make the root path point to the index action in pins controller: 
-	-in routes.rb 
-	resources :pins
-	root 'pins#index'
+	commit
+
+--------- taking this out for now and putting lower below so can see dishes index and new, edit show pages before linking to restaurants. 
+Nest the dish resources in the restaurants resources: 
+	-in routes.rb, change resources :restaurants to: 
+	resources :restaurants do
+		resources :dishes
+	end
 
 Create an index view: 
-	In app/views/pin create new file called:
+	In app/views/dish create new file called:
 	index.html.erb
 	and put in a simple: 
-	<h1>This is the index placeholder</h1>
+	<h1>This is the dishes index placeholder</h1>
 
-Create the new and create CRUD actions in pins_controller.rb 
+Create the new and create CRUD actions in dishs_controller.rb 
 	Start wtih this: 
 	def new
-		@pin = Pin.new
+		@dish = Dish.new
 	end
 
 	def create
-		@pin = Pin.new(pin_params)
+		@dish = Dish.new(dish_params)
 	end
 
 
 	private
 
-	def pin_params
-		params.require(:pin).permit(:title, :description)
+	def dish_params
+		params.require(:dish).permit(:name, :description, :yumyuck)
 	end
 
-Create a view for creating a new pin: 
-	In app/views/pins: 
+Create a view for creating a new dish: 
+	In app/views/dishs: 
 	new.html.erb
 	
-	Add code in new view for a form to create a new pin: 
+	Add code in new view for a form to create a new dish: 
 	<h1>New Form</h1>
 	<%= render 'form' %>
 	<%= link_to "Back", root_path %>
 
-List all of the pins on the index page: 
-	Go back to views/pins/index.html.erb and add: 
-	<% @pins.each do |pin| %>
+List all of the dishs on the index page: 
+	Go back to views/dishes/index.html.erb and add: 
+	<% @dishes.each do |dish| %>
 	  <h2>
-	    <%= link_to pin.title, pin %>
+	    <%= link_to dish.name, dish %>
 	  </h2>
 	<% end %>
-	Refresh, should still get no method error in Pins#index error 
-	So now add the following to the index method in the PinsController:
-	@pins = Pin.all.order("created_at DESC")
+
+	Refresh, should still get no method error in dishes#index error 
+	So now add the following to the index method in the DishsController:
+	@dishes = Dish.all.order("created_at DESC")
 	refresh
 
-Add edit, update and destroy actions/methods to pin controller: 
+Add edit, update and destroy actions/methods to dish controller: 
 	def edit
 	
 	end
 	
 	def update
-		if @pin.update(pin_params)
-			redirect_to @pin, notice: "Pin was Successfully updated"
+		if @dish.update(dish_params)
+			redirect_to @dish, notice: "Dish was Successfully updated"
 		else
 			render 'edit'
 		end
@@ -473,22 +478,17 @@ Add edit, update and destroy actions/methods to pin controller:
 
 	end
 
-Create a form partial for creating a new pin: 
-	In views/pins create the form partial _form.html.erb
-	In gemfile: 
-	gem 'simple_form', '~> 3.0.2'
-	bundle
-	Read documentation on simple_form
-	rails g simple_form:install --bootstrap  
+Create a form partial for creating a new dish: 
+	In views/dishs create the form partial _form.html.erb
 	In the form partial: 
-	<%= simple_form_for @pin, html: {multipart: true} do |f| %>
-	  <%= if @pin.errors.any?  %>
+	<%= simple_form_for @dish, html: {multipart: true} do |f| %>
+	  <% if @dish.errors.any?  %>
 	    <div id="errors"></div>
 	    <h2></h2>
-	    <%= pluralize(@pin.errors.count, "error") %>
-	    prevented this Pin from saving
+	    <%= pluralize(@dish.errors.count, "error") %>
+	    prevented this Dish from saving
 	    <ul></ul>
-	    <% @pin.errors.full_messages.each do |msg| %>
+	    <% @dish.errors.full_messages.each do |msg| %>
 	      <li>
 	        <%= msg %>
 	      </li>
@@ -496,92 +496,121 @@ Create a form partial for creating a new pin:
 	  <% end %>
 	  
 	  <div class="form-group">
-	    <%= f.input :title, input_html: { class: 'form-control'} %>
+	    <%= f.input :name, input_html: { class: 'form-control'} %>
 	  </div>
 	  <div class="form-group">
 	    <%= f.input :description, input_html: { class: 'form-control'} %>
 	  </div>
+	  <div class="form-group">
+	    <%= f.input :yumyuck, input_html: { class: 'form-control'} %>
+	  </div>
 	  <%= f.button :submit, class: "btn btn-primary" %>
 	<% end %>
-	Refresh in browser localhost:3000/pins/new, should see form. 
 
-	In the pins controller, create action, add: 
-		if @pin.save
-			redirect_to @pin, notice: "Successfully created new Pin"
+	Refresh in browser localhost:3000/dishes/new, should see form. 
+
+	In the dishes controller, create action, add: 
+		if @dish.save
+			redirect_to @dish, notice: "Successfully created new Dish"
 		else
 			render 'new'
 		end
 
 		refresh
 
-Add a flash message for when a new pin is created: 
+Add a flash message for when a new dish is created: 
 	In view/layouts/application.html.erb, 
 	In the <body> tag and above the <%=yield: 
 	<% flash.each do |name, msg| %>
       <%= content_tag :div, msg, class: "alert alert-info"  %> <!-- this is bootstrap -->
     <% end %>
-    Refresh and get unknow action error. url should have /pin/1 but we haven't defined a show action inside of our params. 
-	So in PinsController:  
+    Refresh and get unknow action error. url should have /dish/1 but we haven't defined a show action inside of our params. 
+	So in DishsController:  
 	def show
 	end
 
-	Because we'll have to do this for a few of our cruds, create a private method called find_pin for a few of the crud actions in pins_controller, under private, so:
+	Because we'll have to do this for a few of our cruds, create a private method called find_dish for a few of the crud actions in dishs_controller, under private, so:
 	private 
-	def find_pin
-		@pin = Pin.find(params[:id])
+	def find_dish
+		@dish = Dish.find(params[:id])
 	end
 	Then at top add following before action: 
-	before_action :find_pin, only: [:show, :edit, :update, :destroy]
+	before_action :find_dish, only: [:show, :edit, :update, :destroy]
 
 Create a SHOW view: 
-	In views/pins/ create show.html.erb
+	In views/dishs/ create show.html.erb
 	Add following to file: 
 	<h1>
-		<%= @pin.title %>
+		<%= @dish.name %>
 		<p>
-		<%= @pin.description %>
+		<%= @dish.description %>
+		</p>
+		<p>
+		<%= @dish.yumyuck %>
 		</p>
 	</h1>
-	Refresh, should see flash message "successfully created new pint" as well as title and description. 
+	Refresh, should see flash message "successfully created new disht" as well as name and description and yumyuck. 
 
-	Also add a link back to the home page (root path): 
-	<%= link_to "Back", root_path %>
+	Also add a link back to the dishes index page: 
+	<%= link_to "Back", dishes_path %>
 	Refresh to see.
 
-
-
-
-
 Create an edit view: 
-	Create new file in views/pins called:
+	Create new file in views/dishs called:
 	edit.html.erb 
 	Add code: 
-	<h1>Edit Pin</h1>
+	<h1>Edit Dish</h1>
 	<%= render 'form' %>
-	<%= link_to "Cancel", pin_path %>
+	<%= link_to "Cancel", dish_path %>
 
 	Commit
  
 Add a link_to on the show page to link to the edit page: 
-	<%= link_to "Edit", edit_pin_path %>
+	<%= link_to "Edit", edit_dish_path %>
 	Refresh
-	Add code in the destroy action to delete a pin & redirect to main index page: 
-	  @pin.destroy
-	  redirect_to root_path
+	Add code in the destroy action to delete a dish & redirect to main index page: 
+	  @dish.destroy
+	  redirect_to dishes_path
 
 	Commit	
 
 Now add delete button on show page: 
-	In views/show:
-	<%= link_to "Delete", pin_path, method: :delete, data: {confirm: "Are you sure?"} %>
+	In views/dishes/show:
+	<%= link_to "Delete", dish_path, method: :delete, data: {confirm: "Are you sure?"} %>
 	Refresh
 
 Add a "new" button on the index page:
-	In views/index:
-	<%= link_to "New Pin", new_pin_path %>
+	In views/dishes/index:
+	<%= link_to "New Dish", new_dish_path %>
 	Refresh
 	Commit
 
+Link dishes to restaurants: 
+	Create associations in models dish.rb and restaurant.rb 
+	has_many & belongs_to
+	
+	Generate a migration so that the dish table has a restaurant_id column: 
+	rails g migration add_restaurant_id_to_dishes restaurant_id:integer:index
+	Can see this in migration file
+	rake db:migrate
+	See changes in schema.rb file
+
+	(If you want)Connect our existing dishs to a restaurant by going into rails c and doing something like:
+	@dish = Restaurant.first
+	@restaurant = User.first 
+	@dish.restaurant = @restaurant
+	@dish.save 
+	
+	In dishs_controller, change the @dish.new in both the new and the create actions to: 
+	current_user.restaurants.build
+	make sure your signed in and refresh, make a new res, 
+	commit
+
+Nest the dish resources in the restaurants resources: 
+	-in routes.rb, change resources :restaurants to: 
+	resources :restaurants do
+		resources :dishes
+	end
 
 
 
@@ -600,17 +629,17 @@ Add Paperclip gem for uploading images:
 	Read paperclip documentation
 	Install imagemagic
 	
-	From the quickstart section in documentation, add the has_attached_file and validates_attachment_content_type to the pin: 
-	Add following to pin.rb (this is copied from paperclip gem but changed for our needs):
+	From the quickstart section in documentation, add the has_attached_file and validates_attachment_content_type to the dish: 
+	Add following to dish.rb (this is copied from paperclip gem but changed for our needs):
 	has_attached_file :image, styles: { :medium => "300x300>" }
 	validates_attachment_content_type :image, :content_type => /\Aimage\/.*\Z/
 	Run the migration (using generator) that it tells you to in documentation. For us, this will be: 
-		rails g paperclip pin image
+		rails g paperclip dish image
 	rake db:migrate
 	commit
 
 	Add image upload link to form: 
-	Under views/pin/_form.html.erb:
+	Under views/dish/_form.html.erb:
 		<div class="form-group">
   			<%= f.input :image, input_html: { class: 'form-control'} %>
 		</div>
@@ -619,50 +648,50 @@ Add Paperclip gem for uploading images:
 	refresh, try to add an image, 
 	commit
 
-	In pins controller add: 
+	In dishs controller add: 
 	:image
-	to the pin_params behind :description
+	to the dish_params behind :description
 	
 	Add image tag to top of show page and edit page:
 		In show.html.erb: 
-		<%= image_tag @pin.image.url(:medium) %>
+		<%= image_tag @dish.image.url(:medium) %>
 
 		Then show the user which image they are editing when they are editing it. 
 		In edit.html.erb, above = render 'form' add: 
-	   	<%= image_tag @pin.image.url(:medium) %>	
+	   	<%= image_tag @dish.image.url(:medium) %>	
 
-	Add the image tag to the pins on the index page:
+	Add the image tag to the dishs on the index page:
 	views/index.html.erb, change code to this: 
-		<% @pins.each do |pin| %>
-		  <%= link_to (image_tag pin.image.url(:medium)), pin %>
+		<% @dishs.each do |dish| %>
+		  <%= link_to (image_tag dish.image.url(:medium)), dish %>
 		  <h2>
-		    <%= link_to pin.title, pin %>
+		    <%= link_to dish.title, dish %>
 		  </h2>
 		<% end %>
 
-Add jquery MASONRY gem to have pins auto stack: 
+Add jquery MASONRY gem to have dishs auto stack: 
 	in gemfile, put 
 	gem 'masonry-rails', '~> 0.2.1'
 	and bundle
 	
 	From documentation: add this line from the JavaScript section in application.js file under the two jquerys: 
 	//= require masonry/jquery.masonry
-	put this in pins.js.coffee, EXACTLY like this (coffescript is space/tab sensative:
+	put this in dishs.js.coffee, EXACTLY like this (coffescript is space/tab sensative:
 	$ ->
-	  $('#pins').imagesLoaded ->
-	    $('#pins').masonry
+	  $('#dishs').imagesLoaded ->
+	    $('#dishs').masonry
 	      itemSelector: '.box'
 	      isFitWidth: true
 	
-	Enable transitions in pins/index.html.erb: 
+	Enable transitions in dishs/index.html.erb: 
 	Should end up like this: 
-	<div class="transitions-enabled" id="pins">
-		<% @pins.each do |pin| %>
+	<div class="transitions-enabled" id="dishs">
+		<% @dishs.each do |dish| %>
 		  <div class="box panel panel-default">
-		    <%= link_to (image_tag pin.image.url(:medium)), pin %>
+		    <%= link_to (image_tag dish.image.url(:medium)), dish %>
 		    <div class="panel-body">
 		      <h2>
-		        <%= link_to pin.title, pin %>
+		        <%= link_to dish.title, dish %>
 		      </h2>
 		    </div>
 		  </div>
@@ -676,6 +705,7 @@ Add jquery MASONRY gem to have pins auto stack:
 	refresh
 	commit
 
+---------CSS-----------------
 CSS styling:
 	Paste in the styles from this github repo. it's also here. just paste into the bottom of applicatin.css.scss:
 	body {
@@ -821,7 +851,7 @@ Bootstrapify the forms:
 		  <div class="row">
 		    <div class="panel panel-default">
 		      <div class="panel-heading">
-		        <h1>Create A New Pin</h1>
+		        <h1>Create A New Dish</h1>
 		      </div>
 		      <div class="panel-body">
 		        <%= render 'form' %>

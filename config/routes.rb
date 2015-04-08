@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   devise_for :users
   resources :restaurants
+  resources :dishes
+  
 
   root 'welcome#index'
 

@@ -1,0 +1,7 @@
+ 	<h1>This is the dishes index placeholder</h1>
+<% @dishes.each do |dish| %>
+  <h2>
+    <%= link_to dish.name, dish %>
+  </h2>
+<% end %>
+<%= link_to "New Dish", new_dish_path %>
