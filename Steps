@@ -322,7 +322,7 @@ Add BOOTSTRAP:
 	@import "bootstrap"; 
 	Refresh to see new styling 
 	commit
-	
+
 	Add this to the application.js file under the two jquery lines: 
 	//= require bootstrap-sprockets
 	Refresh
@@ -366,6 +366,28 @@ Add Nav Bar:
 	refresh
 	commit
 
+
+
+Add a welcome page and make it the index: 
+	Create a new welcome controller with with an index view: 
+	rails g controller welcome index
+
+	In views/restaurants/ create a welcome.html.erb page. 
+	Put a simple "Welcome to Yummy Yucky" on it. 
+	In routes.rb, change "restaurants#index" to "welcome#index"
+
+Add a link on the navbar to take you to the restaurants index page: 
+	In views/layouts/application.html.erb, above the other links in the nav add: 
+	<li>
+		<%= link_to "Restaurants", restaurants_path %>
+	</li>
+
+Make it so that after signing in, you land on the restaurants index page instead of the welcome page. 
+	
+Add authentication so users who aren't signed in can't do anything:
+	below the first before_action in the restaurants_controller, add: 
+	before_action :authenticate_user!, except: [:index, :show]
+	Test in an in congnito window and should see that you can't do stuff. 
 
 
 
@@ -634,7 +656,7 @@ Add jquery MASONRY gem to have pins auto stack:
 	      itemSelector: '.box'
 	      isFitWidth: true
 	
-	Enable transitions in index.html.erb: 
+	Enable transitions in pins/index.html.erb: 
 	Should end up like this: 
 	<div class="transitions-enabled" id="pins">
 		<% @pins.each do |pin| %>
@@ -651,6 +673,7 @@ Add jquery MASONRY gem to have pins auto stack:
 
 	To application.css.scss file above require tree add:  
 	*= require 'masonry/transitions'
+
 	rails s
 	refresh
 	commit
@@ -793,24 +816,6 @@ Style up the show page with various. should look like this:
 	    </div>
 	  </div>
 	</div>
-	
-Add a welcome page and make it the index: 
-	In views/pins/ create a welcome.html.erb page. 
-	Put a simple "Welcome to Yummy Yucky" on it. 
-	In routes.rb, change root "pins#index" to "pins#welcome"
-
-Add a link on the navbar to take you to the pins index page: 
-	In views/layouts/application.html.erb, above the other links in the nav add: 
-	<li>
-		<%= link_to "Pins", pins_path %>
-	</li>
-
-Make it so that after signing in, you land on the pins index page instead of the welcome page. 
-	
-Add authentication so users who aren't signed in can't do anything:
-	below the first before_action in the pins_controller, add: 
-	before_action :authenticate_user!, except: [:index, :show]
-	Test in an in congnito window and should see that you can't do stuff. 
 
 Bootstrapify the forms:
 	Update the new form to look like this: 
