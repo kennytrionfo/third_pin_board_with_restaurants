@@ -366,8 +366,6 @@ Add Nav Bar:
 	refresh
 	commit
 
-
-
 Add a welcome page and make it the index: 
 	Create a new welcome controller with with an index view: 
 	rails g controller welcome index
@@ -386,7 +384,7 @@ Make it so that after signing in, you land on the restaurants index page instead
 	
 Add authentication so users who aren't signed in can't do anything:
 	below the first before_action in the restaurants_controller, add: 
-	before_action :authenticate_user!, except: [:index, :show]
+	before_action :authenticate_user!, except: [:index, ]
 	Test in an in congnito window and should see that you can't do stuff. 
 
 
