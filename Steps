@@ -80,6 +80,7 @@ Create an index view:
 	index.html.erb
 	and put in a simple: 
 	<h1>This is the index placeholder</h1>
+	commit
 
 Create the new and create CRUD actions in Restaurants_controller.rb 
 	Start wtih this: 
