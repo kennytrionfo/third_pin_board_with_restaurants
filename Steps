@@ -297,6 +297,8 @@ Link Restaurants to Users:
 	
 	In restaurants_controller, change the @restaurant.new in both the new and the create actions to: 
 	current_user.restaurants.build
+	make sure your signed in and refresh, make a new res, 
+	commit
 
 Display the user's email in each restaurant:
 	In show.html.erb file: 
