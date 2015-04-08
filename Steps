@@ -279,32 +279,32 @@ Try a branch here?:
 	With: 
 	git branch -b something...
 	
-Link Pins to Users: 
-	Create associations in models pin.rb and user.rb 
+Link Restaurants to Users: 
+	Create associations in models restaurant.rb and user.rb 
 	has_many & belongs_to
 	
-	Generate a migration so that the pin table has a user_id column: 
-	rails g migration add_user_id_to_pins user_id:integer:index
+	Generate a migration so that the restaurant table has a user_id column: 
+	rails g migration add_user_id_to_restaurants user_id:integer:index
 	Can see this in migration file
 	rake db:migrate
 	See changes in schema.rb file
 
-	(If you want)Connect our existing pins to a user by going into rails c and doing something like:
-	@pin = Pin.first
+	(If you want)Connect our existing restaurants to a user by going into rails c and doing something like:
+	@restaurant = Restaurant.first
 	@user = User.first 
-	@pin.user = @user
-	@pin.save 
+	@restaurant.user = @user
+	@restaurant.save 
 	
-	In pins_controller, change the @pin.new in both the new and the create actions to: 
-	current_user.pins.build
+	In restaurants_controller, change the @restaurant.new in both the new and the create actions to: 
+	current_user.restaurants.build
 
-Display the user's email in each pin:
+Display the user's email in each restaurant:
 	In show.html.erb file: 
 	<p></p>
 	Submitted by
-	<%= @pin.user.email %>
+	<%= @restaurant.user.email %>
 	<br/>
-	Refresh and see error cuz we don't have a pin.user.email so: 
+	Refresh and see error cuz we don't have a restaurant.user.email so: 
 
 Add BOOTSTRAP: 
 	Install the gem in Gemfile: 
@@ -329,12 +329,12 @@ Add Nav Bar:
 	<nav class="navbar navbar-default">
 	<div class="container">
 	  <div class="navbar-brand">
-	    <%= link_to "Pin Board", root_path %>
+	    <%= link_to "Restaurant Board", root_path %>
 	  </div>
 	  <% if user_signed_in? %>
 	    <ul class="nav navbar-nav navbar-right">
 	      <li>
-	        <%= link_to "New Pin", new_pin_path %>
+	        <%= link_to "New Restaurant", new_restaurant_path %>
 	      </li>
 	      <li>
 	        <%= link_to "Account", edit_user_registration_path %>
@@ -356,8 +356,8 @@ Add Nav Bar:
 	</div>
 	</nav>
      
-	Delete new pin link from the views/pins/index page: 
-	<%= link_to "New Pin", new_pin_path %>
+	Delete new restaurant link from the views/restaurants/index page: 
+	<%= link_to "New Restaurant", new_restaurant_path %>
 	since we already have one in the nav now. 
 	refresh
 	commit
