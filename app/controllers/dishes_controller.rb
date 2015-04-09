@@ -6,11 +6,11 @@ class DishesController < ApplicationController
 	end
 
 	def new
-		@dish = restaurant.dishes.build  #can't figure out how to build a new dish
+		@dish = @restaurant.dishes.create  #can't figure out how to build a new dish
 	end
 
 	def create
-		@dish = current_restaurant.dish.build(dish_params)
+		@dish = @restaurant.dishes.create(dish_params)
 		if @dish.save
 			redirect_to @dish, notice: "Successfully created new Dish"
 		else
