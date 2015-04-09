@@ -50,7 +50,7 @@ def set_restaurant  # from fit_right
 end
 
 def dish_params  # from fit_right
-	params[:dish].permit(:name)
+	params[:dish].permit(:name, :description, :yumyuck)
 end
 	# def dish_params
 	# 	params.require(:dish).permit(:name, :description, :yumyuck)
