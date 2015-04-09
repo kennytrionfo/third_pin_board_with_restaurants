@@ -424,6 +424,36 @@ Create the new and create CRUD actions in dishs_controller.rb
 		params.require(:dish).permit(:name, :description, :yumyuck)
 	end
 
+#————from the fit_right app————Kenny Trionfo Apr 8,2015————
+
+Now create the form to actually create a new dish: 
+	Create two partials (new files) in views/dishes:
+	1 _form.html.erb 
+	<%= form_for([@restaurant, @restaurant.dishes.build]) do |f| %>
+	<%= f.text_field :content, placeholder: "New Dish" %>
+	<%= f.submit %>
+	<% end %>
+	
+	Commit
+
+	2 _dish.html.erb
+	<p> <%= dish.content %></p>
+
+Show the new dishes form and the restaurant's dishes under the restaurant's show page:
+	Create a div that renders the restaurant from the _dishes.html.erb file. Under the description paragraph: 
+	<div id="todo_items_wrapper">
+		<%= render @restaurant.dishes %>
+	</div>
+	Add another div inside of that div that renders the todo item's form: 
+	<div id="form">
+		<%= render "dishes/form" %>
+	</div>
+	
+	Test that it works:
+	Go to the show page to see that you can add a todo item on the todo list show page.  
+
+#————end of stuff from fitright————Kenny Trionfo Apr 8,2015————
+
 Create a view for creating a new dish: 
 	In app/views/dishs: 
 	new.html.erb
