@@ -1,9 +1,25 @@
-<%= form_for([@restaurant, @restaurant.dishes.build]) do |f| %>
-<%= f.text_field :name, placeholder: "Name" %> <br>
-<p></p>
-<%= f.text_field :description, placeholder: "Description" %> <br>
-<p></p>
-<%= f.text_field :yumyuck, placeholder: "Yummy or Yucky?" %> <br>
-<p></p>
-<%= f.submit %>
+<%= simple_form_for ([@restaurant, @restaurant.dishes.build]) do |f| %>
+  <% if @dish.errors.any?  %>
+    <div id="errors"></div>
+    <h2></h2>
+    <%= pluralize(@dish.errors.count, "error") %>
+    prevented this Dish from saving
+    <ul></ul>
+    <% @dish.errors.full_messages.each do |msg| %>
+      <li>
+        <%= msg %>
+      </li>
+    <% end %>
+  <% end %>
+  
+  <div class="form-group">
+    <%= f.input :name, input_html: { class: 'form-control'} %>
+  </div>
+  <div class="form-group">
+    <%= f.input :description, input_html: { class: 'form-control'} %>
+  </div>
+  <div class="form-group">
+    <%= f.input :yumyuck, input_html: { class: 'form-control'} %>
+  </div>
+  <%= f.button :submit, class: "btn btn-primary" %>
 <% end %>

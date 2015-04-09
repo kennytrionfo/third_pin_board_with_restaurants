@@ -1028,6 +1028,11 @@ Bootstrapify the forms:
 
 	refresh, commit
 
+Go back through code and clean up and refactor
+	Delete comments
+	Make comments clear
+	Take out debugger
+	etc
 
 ------End of regular------
 

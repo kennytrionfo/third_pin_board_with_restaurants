@@ -5,7 +5,7 @@ before_action :set_restaurant #from fit_right
 	def index
 		@dishes = Dish.all.order("created_at DESC")
 	end
-
+ 
 	def new
 		@dish = @restaurant.dishes.create  
 	end
