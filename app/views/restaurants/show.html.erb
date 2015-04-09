@@ -12,11 +12,12 @@
 <%= link_to "Edit", edit_restaurant_path %>
 <%= link_to "Delete", restaurant_path, method: :delete, data: {confirm: "Are you sure?"} %>
 
+
 <!-- #————from fit_right————Kenny Trionfo Apr 8,2015———— -->
 <div id="todo_items_wrapper">
 		<%= render @restaurant.dishes %>
 	<div id="form">
-		<%= render "dishes/form" %>
+		<%= render "dishes/form2" %>
 	</div>
 </div>
 
