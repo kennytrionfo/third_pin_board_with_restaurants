@@ -463,7 +463,7 @@ Create a view for creating a new dish:
 	<%= render 'form' %>
 	<%= link_to "Back", root_path %>
 
-List all of the dishs on the index page: 
+List all of the dishes on the index page: 
 	Go back to views/dishes/index.html.erb and add: 
 	<% @dishes.each do |dish| %>
 	  <h2>
