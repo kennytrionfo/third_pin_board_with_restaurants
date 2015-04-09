@@ -1,4 +1,4 @@
 <%= form_for([@restaurant, @restaurant.dishes.build]) do |f| %>
-<%= f.text_field :content, placeholder: "New Dish" %>
+<%= f.text_field :name, placeholder: "New Dish" %>
 <%= f.submit %>
 <% end %>
