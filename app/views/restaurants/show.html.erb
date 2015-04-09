@@ -11,6 +11,8 @@
 <%= link_to "Restaurants", restaurants_path %>
 <%= link_to "Edit", edit_restaurant_path %>
 <%= link_to "Delete", restaurant_path, method: :delete, data: {confirm: "Are you sure?"} %>
+<%= link_to("new dish",  {:controller => 'dishes', :restaurant_id => @restaurant.id,}) %>
+
 
 
 <!-- #————from fit_right————Kenny Trionfo Apr 8,2015———— -->
