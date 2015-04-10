@@ -387,21 +387,14 @@ Create a Dishes controller:
 	In console: 
 	rails g controller Dishes 
 
-Create an index action 
+Create an index action # dont' know if we'll need this in the end cuz we are putting the dishes on each restaurant's view. 
 	In dishes_controller.rb:
 	def index
 	end
 
 	commit
 
---------- taking this out for now and putting lower below so can see dishes index and new, edit show pages before linking to restaurants. 
-Nest the dish resources in the restaurants resources: 
-	-in routes.rb, change resources :restaurants to: 
-	resources :restaurants do
-		resources :dishes
-	end
-
-Create an index view: 
+Create an index view: # dont' know if we'll need this in the end cuz we are putting the dishes on each restaurant's view. 
 	In app/views/dish create new file called:
 	index.html.erb
 	and put in a simple: 
@@ -424,14 +417,33 @@ Create the new and create CRUD actions in dishs_controller.rb
 		params.require(:dish).permit(:name, :description, :yumyuck)
 	end
 
-#————from the fit_right app————Kenny Trionfo Apr 8,2015————
-
 Now create the form to actually create a new dish: 
 	Create two partials (new files) in views/dishes:
 	1 _form.html.erb 
-	<%= form_for([@restaurant, @restaurant.dishes.build]) do |f| %>
-	<%= f.text_field :content, placeholder: "New Dish" %>
-	<%= f.submit %>
+	<%= simple_form_for ([@restaurant, @restaurant.dishes.build]) do |f| %>
+		<% if @dish.errors.any?  %>
+		<div id="errors"></div>
+		<h2></h2>
+		<%= pluralize(@dish.errors.count, "error") %>
+		prevented this Dish from saving
+		<ul></ul>
+		<% @dish.errors.full_messages.each do |msg| %>
+		  <li>
+		    <%= msg %>
+		  </li>
+		<% end %>
+	<% end %>
+  
+	  <div class="form-group">
+	    <%= f.input :name, input_html: { class: 'form-control'} %>
+	  </div>
+	  <div class="form-group">
+	    <%= f.input :description, input_html: { class: 'form-control'} %>
+	  </div>
+	  <div class="form-group">
+	    <%= f.input :yumyuck, input_html: { class: 'form-control'} %>
+	  </div>
+	  <%= f.button :submit, class: "btn btn-primary" %>
 	<% end %>
 	
 	Commit
@@ -444,15 +456,6 @@ Show the new dishes form and the restaurant's dishes under the restaurant's show
 	<div id="todo_items_wrapper">
 		<%= render @restaurant.dishes %>
 	</div>
-	Add another div inside of that div that renders the todo item's form: 
-	<div id="form">
-		<%= render "dishes/form" %>
-	</div>
-	
-	Test that it works:
-	Go to the show page to see that you can add a todo item on the todo list show page.  
-
-#————end of stuff from fitright————Kenny Trionfo Apr 8,2015————
 
 Create a view for creating a new dish: 
 	In app/views/dishs: 
@@ -463,7 +466,16 @@ Create a view for creating a new dish:
 	<%= render 'form' %>
 	<%= link_to "Back", root_path %>
 
-List all of the dishes on the index page: 
+Add another div in the dishes/new view that renders the new dish form: 
+	<div id="form">
+		<%= render "dishes/form" %>
+	</div>
+	
+	Test that it works:
+	Go to the restaurant show page, click new, should be routed to dishes/new view that's rendering the form. 
+
+
+List all of the dishes on the index page:  # Again, we may not need this. 
 	Go back to views/dishes/index.html.erb and add: 
 	<% @dishes.each do |dish| %>
 	  <h2>
@@ -552,7 +564,7 @@ Add a flash message for when a new dish is created:
 	Then at top add following before action: 
 	before_action :find_dish, only: [:show, :edit, :update, :destroy]
 
-Create a SHOW view: 
+Create a SHOW view for dishes: 
 	In views/dishs/ create show.html.erb
 	Add following to file: 
 	<h1>
@@ -570,7 +582,7 @@ Create a SHOW view:
 	<%= link_to "Back", dishes_path %>
 	Refresh to see.
 
-Create an edit view: 
+Create an EDIT view for dishes: 
 	Create new file in views/dishs called:
 	edit.html.erb 
 	Add code: 
@@ -604,6 +616,7 @@ Add a "new" button on the index page:
 ==== Right Here Right Now =====
 ===============================
 -Log time. 
+-Clean up the steps below & above to make them accurate. 
 -Trying to create a new dish that is linked to a restaurant and show it on a restaurant's page. 
 -Make it so that after you signup or log back in, you are redirected to the pins index page, not the landing page.  
 -Add a restaurant model with a controller, crud actions, views and routes and then connect restaurants to a user pins to a restaurant. 
