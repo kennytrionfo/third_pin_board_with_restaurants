@@ -601,7 +601,8 @@ Add a link_to on the show page to link to the edit page:
 
 	Commit	
 
-Now add delete button on show page: 
+Add the ablity to DELETE A DISH 
+	Add a delete button on show page: 
 	In views/dishes/show:
 	<%= link_to "Delete", dish_path, method: :delete, data: {confirm: "Are you sure?"} %>
 	Refresh
@@ -611,22 +612,6 @@ Add a "new" button on the index page:
 	<%= link_to "New Dish", new_dish_path %>
 	Refresh
 	Commit
-
-===============================
-==== Right Here Right Now =====
-===============================
--Log time. 
--Clean up the steps below & above to make them accurate. 
--Trying to create a new dish that is linked to a restaurant and show it on a restaurant's page. 
--Make it so that after you signup or log back in, you are redirected to the pins index page, not the landing page.  
--Add a restaurant model with a controller, crud actions, views and routes and then connect restaurants to a user pins to a restaurant. 
--Change the devise notices for sucessful login, logout etc to be custom. 
--Add a yummy yucky attribute to pins. 
--James - help me find and change the "missing" word on the cards on the pins index page when there is no picture. 
--James - help me find where I change the css so that the image has some padding right it too so it looks like it's in the card. 
--Make the signed in, new pin, signed out notices fade after showing and not change the page also upon refresh. 
--Redo this freaking app 3 times. 
-===============================
 
 Link dishes to restaurants: 
 	Create associations in models dish.rb and restaurant.rb 
@@ -656,6 +641,21 @@ Nest the dish resources in the restaurants resources:
 		resources :dishes
 	end
 
+===============================
+==== Right Here Right Now =====
+===============================
+-Log time. 
+-Clean up the steps below & above to make them accurate. 
+-Trying to create a new dish that is linked to a restaurant and show it on a restaurant's page. 
+-Make it so that after you signup or log back in, you are redirected to the pins index page, not the landing page.  
+-Add a restaurant model with a controller, crud actions, views and routes and then connect restaurants to a user pins to a restaurant. 
+-Change the devise notices for sucessful login, logout etc to be custom. 
+-Add a yummy yucky attribute to pins. 
+-James - help me find and change the "missing" word on the cards on the pins index page when there is no picture. 
+-James - help me find where I change the css so that the image has some padding right it too so it looks like it's in the card. 
+-Make the signed in, new pin, signed out notices fade after showing and not change the page also upon refresh. 
+-Redo this freaking app 3 times. 
+===============================
 
 
 Add a wrapper around the new & edit forms. 
@@ -748,6 +748,13 @@ Add jquery MASONRY gem to have dishs auto stack:
 	rails s
 	refresh
 	commit
+
+Make the landing page for a registered user after login the restaurants index page: 
+	In the application_controller.rb, at bottom, put: 
+	private
+	  	def after_sign_in_path_for(resource)
+			"/restaurants"
+		end
 
 ---------CSS-----------------
 CSS styling:
