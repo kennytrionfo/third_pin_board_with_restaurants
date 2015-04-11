@@ -692,12 +692,12 @@ Add Paperclip gem for uploading images:
 	refresh, try to add an image, 
 	commit
 
-	In dishs controller add: 
+	In dishes controller add: 
 	:image
 	to the dish_params behind :description
 	
 	Add image tag to top of show page and edit page:
-		In show.html.erb: 
+		In dishes/show.html.erb: 
 		<%= image_tag @dish.image.url(:medium) %>
 
 		Then show the user which image they are editing when they are editing it. 

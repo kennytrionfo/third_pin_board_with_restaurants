@@ -48,7 +48,7 @@ private
 	end
 
 	def dish_params  # from fit_right
-		params[:dish].permit(:name, :description, :yumyuck)
+		params[:dish].permit(:name, :description, :yumyuck, :image)
 	end
 	# def dish_params
 	# 	params.require(:dish).permit(:name, :description, :yumyuck)
